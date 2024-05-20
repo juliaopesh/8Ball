@@ -1,0 +1,239 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pool Game</title>
+  <style>
+    /* Add your CSS styles here */
+  </style>
+</head>
+<body>
+  <div id="pool-table-container"></div>
+  <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg id = "pool-table" width="700" height="1375" viewBox="-25 -25 1400 2750"xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <rect width="1350" height="2700" x="0" y="0" fill="#C0D0C0" /><rect width="1400" height="25" x="-25" y="-25" fill="darkgreen" />
+  <rect width="1400" height="25" x="-25" y="2700" fill="darkgreen" />
+  <rect width="25" height="2750" x="-25" y="-25" fill="darkgreen" />
+  <rect width="25" height="2750" x="1350" y="-25" fill="darkgreen" />
+  <circle cx="0" cy="0" r="114" fill="black" />
+  <circle cx="0" cy="1350" r="114" fill="black" />
+  <circle cx="0" cy="2700" r="114" fill="black" />
+  <circle cx="1350" cy="0" r="114" fill="black" />
+  <circle cx="1350" cy="1350" r="114" fill="black" />
+  <circle cx="1350" cy="2700" r="114" fill="black" />
+  <circle id="1" circle cx="675" cy="675" r="28" fill="YELLOW" />
+  <circle id="2" circle cx="644" cy="622" r="28" fill="BLUE" />
+  <circle id="3" circle cx="705" cy="622" r="28" fill="RED" />
+  <circle id="4" circle cx="614" cy="571" r="28" fill="PURPLE" />
+  <circle id="5" circle cx="736" cy="571" r="28" fill="ORANGE" />
+  <circle id="8" circle cx="675" cy="571" r="28" fill="BLACK" />
+  <circle id="6" circle cx="644" cy="521" r="28" fill="GREEN" />
+  <circle id="7" circle cx="705" cy="521" r="28" fill="BROWN" />
+  <circle id="9" circle cx="587" cy="518" r="28" fill="LIGHTYELLOW" />
+  <circle id="10" circle cx="762" cy="518" r="28" fill="LIGHTBLUE" />
+  <circle id="11" circle cx="675" cy="472" r="28" fill="PINK" />
+  <circle id="12" circle cx="614" cy="468" r="28" fill="MEDIUMPURPLE" />
+  <circle id="13" circle cx="736" cy="468" r="28" fill="LIGHTSALMON" />
+  <circle id="14" circle cx="557" cy="468" r="28" fill="LIGHTGREEN" />
+  <circle id="15" circle cx="793" cy="468" r="28" fill="SANDYBROWN" />
+  <circle id="0" cx="675" cy="2025" r="28" fill="WHITE" />
+  <line id="shooting-direction-line" x1="0" y1="0" x2="0" y2="0" stroke="black" stroke-width="0"></line>
+</svg>
+</div>
+
+  <!-- Coordinates display -->
+  <div>X: <span id="x-coord"></span>, Y: <span id="y-coord"></span></div>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+  <script>
+
+    // Global variable to track whether shooting is allowed
+    var shootingAllowed = false;
+
+  $(document).ready(function() {
+      // Variables to track the initial click position and shooting strength
+      var initialClickX, initialClickY;
+      var shootingStrength = 0;
+      var shootingDirectionLine;
+      var isDragging = false;
+
+      $(document).on('mousemove', handleMouseMove);
+
+      // Function to handle mouse down event on cue ball
+      $('#0').on('mousedown', function(event) {
+
+
+        $(document).off('mousemove', handleMouseMove);
+
+        // Store the initial click position
+        initialClickX = event.pageX;
+        initialClickY = event.pageY;
+        
+        // Call the pullback function
+        pullback();
+
+        // Create the initial shooting direction line
+        // Start tracking mouse movement
+        $(document).on('mousemove', handleMouseMoveForPullBack);
+
+        // Listen for mouse up event
+        $(document).on('mouseup', shoot)
+    });
+
+    function pullback(event) {
+        // Start tracking mouse movement
+        $(document).on('mousemove', handleMouseMoveForPullBack);
+      }
+
+    function shoot() {
+      // Stop tracking mouse movement
+      $(document).off('mousemove', handleMouseMoveForPullBack);
+
+      // Call the shoot function
+      handleShoot();
+      
+      $(document).on('mousemove', handleMouseMove);
+
+      // Remove mouse up event listener
+      $(document).off('mouseup', shoot);
+
+      updateShootingDirectionLine(0, 0, 0, 0, 0);
+
+    }
+
+    function updateSVG() {
+      $.get('/pool.html', function(data) {
+        $('#pool-table').html(data);
+      });
+    }
+
+    // Function to track mouse movement
+    function handleMouseMove(event) {
+      // Get the position of the SVG canvas
+      var svgOffset = $('#pool-table').offset();
+
+      // Calculate the scaling factor based on the viewBox parameters
+      var viewBoxParams = $('#pool-table')[0].viewBox.baseVal;
+      var scaleX = viewBoxParams.width / $('#pool-table').width();
+      var scaleY = viewBoxParams.height / $('#pool-table').height();
+
+      // Calculate the cue ball's position relative to the SVG canvas
+      var cueBallPos = calculateOffset(event, svgOffset, viewBoxParams, scaleX, scaleY);
+
+      // Update coordinates display
+      $('#x-coord').text(cueBallPos.x);
+      $('#y-coord').text(cueBallPos.y);
+
+      // Update cue ball position
+      var cueBall = $('#0');
+      cueBall.attr('cx', cueBallPos.x);
+      cueBall.attr('cy', cueBallPos.y);
+  }
+
+  // Function to calculate cue ball position
+  function calculateOffset(event, svgOffset, viewBoxParams, scaleX, scaleY) {
+      // Calculate the cue ball's position relative to the SVG canvas
+      var cueBallX = (event.pageX - svgOffset.left) * scaleX + viewBoxParams.x;
+      var cueBallY = (event.pageY - svgOffset.top) * scaleY + viewBoxParams.y;
+
+      // Ensure the cue ball stays within the boundaries of the pool table
+      var leftBoundary = viewBoxParams.x;
+      var topBoundary = viewBoxParams.y;
+      var rightBoundary = viewBoxParams.x + viewBoxParams.width;
+      var bottomBoundary = viewBoxParams.y + viewBoxParams.height;
+
+      newX = Math.min(Math.max(cueBallX, leftBoundary), rightBoundary);
+      newY = Math.min(Math.max(cueBallY, topBoundary), bottomBoundary);
+
+      return { x: newX, y: newY };
+  }
+
+
+      // Function to handle mouse move event for pull back
+      function handleMouseMoveForPullBack(event) {
+          
+          var svgOffset = $('#pool-table').offset();
+
+          // Calculate the scaling factor based on the viewBox parameters
+          var viewBoxParams = $('#pool-table')[0].viewBox.baseVal;
+          var scaleX = viewBoxParams.width / $('#pool-table').width();
+          var scaleY = viewBoxParams.height / $('#pool-table').height();
+
+          var endPos = calculateOffset(event, svgOffset, viewBoxParams, scaleX, scaleY);
+
+          // Calculate the distance moved from the initial click position
+          var deltaX = event.pageX - initialClickX;
+          var deltaY = event.pageY - initialClickY;
+
+          //var newX = ('#0').attr('cx') + deltaX
+          //var newY = ('#0').attr('cy') + deltaY
+
+          // Calculate the shooting strength based on the distance moved
+          shootingStrength = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+          updateShootingDirectionLine($('#0').attr('cx'), $('#0').attr('cy'), endPos.x, endPos.y, 10);
+
+
+          // Update the display with shooting strength (you can customize this according to your UI)
+          $('#shooting-strength').text('Shooting Strength: ' + Math.round(shootingStrength));
+
+      }
+
+      function updateShootingDirectionLine(startX, startY, endX, endY, width) {
+          var cueBallOffsetX = parseFloat($('#0').attr('cx'));
+          var cueBallOffsetY = parseFloat($('#0').attr('cy'));
+
+          // Create the SVG line element if it doesn't exist
+          var shootingDirectionLine = $('#shooting-direction-line');
+
+          shootingDirectionLine.attr({
+            'x1': startX,
+            'y1': startY,
+            'x2': endX,
+            'y2': endY,
+            'stroke-width': width
+        });
+
+          // Append the line to the SVG container
+
+      }
+      // Function to handle mouse up event to shoot the cue ball
+      function handleShoot() {
+
+          // Stop tracking mouse movement
+          $(document).off('mousemove', handleMouseMoveForPullBack);
+
+          // Shoot the cue ball with the calculated shooting strength (you can implement your shooting logic here)
+          shootCueBall(shootingStrength);
+
+          // Reset shooting strength
+          shootingStrength = 0;
+
+          // Remove mouse up event listener
+          $(document).off('mouseup', handleShoot);
+      }
+
+      // Function to shoot the cue ball
+      function shootCueBall(strength) {
+          // Calculate the initial velocity of the cue ball based on the difference between the release position and the cue ball position
+          var releaseX = event.pageX;
+          var releaseY = event.pageY;
+          var cueBall = $('#0');
+          var cueBallX = parseInt(cueBall.attr('cx'));
+          var cueBallY = parseInt(cueBall.attr('cy'));
+          var velocityX = (releaseX - cueBallX) / 10; // You can adjust the factor according to your needs
+          var velocityY = (releaseY - cueBallY) / 10; // You can adjust the factor according to your needs
+
+          // For demonstration, let's just show an alert with the initial velocity
+          alert('Initial Velocity: (' + velocityX + ', ' + velocityY + ')');
+      }
+    });
+
+  </script>
+</body>
+</html>
+

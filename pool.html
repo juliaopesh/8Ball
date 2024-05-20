@@ -1,0 +1,107 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pool Game</title>
+    <style>
+                /* CSS */
+                #pool-table-container {
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    text-align: center;
+                    }
+
+                #game-info {
+                    position: fixed;
+                    top: 50%;
+                    left: 10%; /* Adjust the left position as needed */
+                    transform: translateY(-50%);
+                    background-color: rgba(255, 255, 255, 0.8);
+                    padding: 20px; /* Adjust padding as needed */
+                    border-radius: 10px;
+                    border: 2px solid #333;
+                    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+                }
+
+                #game-info div {
+                    margin-bottom: 10px; /* Adjust margin as needed */
+                }
+
+                #game-info span {
+                    font-size: 18px; /* Adjust font size based on viewport width */
+                    font-weight: bold;
+                    color: #333;
+                }
+
+            </style>
+</head>
+<body>
+    <div id="pool-table-container">
+        <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg id= "pool-table" width="700" height="1375" viewBox="-25 -25 1400 2750"xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink">
+<rect width="1350" height="2700" x="0" y="0" fill="#C0D0C0" /><rect width="1400" height="25" x="-25" y="-25" fill="darkgreen" />
+<rect width="1400" height="25" x="-25" y="2700" fill="darkgreen" />
+<rect width="25" height="2750" x="-25" y="-25" fill="darkgreen" />
+<rect width="25" height="2750" x="1350" y="-25" fill="darkgreen" />
+<circle cx="0" cy="0" r="114" fill="black" />
+<circle cx="0" cy="1350" r="114" fill="black" />
+<circle cx="0" cy="2700" r="114" fill="black" />
+<circle cx="1350" cy="0" r="114" fill="black" />
+<circle cx="1350" cy="1350" r="114" fill="black" />
+<circle cx="1350" cy="2700" r="114" fill="black" />
+<circle id="1" circle cx="675" cy="675" r="28" fill="YELLOW" />
+<circle id="2" circle cx="644" cy="622" r="28" fill="BLUE" />
+<circle id="3" circle cx="705" cy="622" r="28" fill="RED" />
+<circle id="4" circle cx="614" cy="571" r="28" fill="PURPLE" />
+<circle id="5" circle cx="736" cy="571" r="28" fill="ORANGE" />
+<circle id="8" circle cx="675" cy="571" r="28" fill="BLACK" />
+<circle id="6" circle cx="644" cy="521" r="28" fill="GREEN" />
+<circle id="7" circle cx="705" cy="521" r="28" fill="BROWN" />
+<circle id="9" circle cx="587" cy="518" r="28" fill="LIGHTYELLOW" />
+<circle id="10" circle cx="762" cy="518" r="28" fill="LIGHTBLUE" />
+<circle id="11" circle cx="675" cy="472" r="28" fill="PINK" />
+<circle id="12" circle cx="614" cy="468" r="28" fill="MEDIUMPURPLE" />
+<circle id="13" circle cx="736" cy="468" r="28" fill="LIGHTSALMON" />
+<circle id="14" circle cx="557" cy="468" r="28" fill="LIGHTGREEN" />
+<circle id="15" circle cx="793" cy="468" r="28" fill="SANDYBROWN" />
+<circle id="0" circle cx="676" cy="2025" r="28" fill="WHITE" />
+<line id="shooting-direction-line" x1="0" y1="0" x2="0" y2="0" stroke="black" stroke-width="0"></line>
+</svg>
+ </div>
+
+  <div>X: <span id="x-coord"></span>, Y: <span id="y-coord"></span></div>
+
+            <div id="game-info">
+            <div>Game Name: <span id="game-name">Game</span></div>
+            <div>Player 1: <span id="player1-name">P1</span></div>
+            <div>Player 2: <span id="player2-name">P2</span></div>
+        </div>
+        <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var currentPlayerIndex = 0;
+            var players = [P1, P2]; // Names of players
+            var playerTurnElement = document.getElementById("player-turn");
+
+            // Function to switch the player's turn
+            function switchPlayerTurn() {
+                currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+                playerTurnElement.innerText = "Player's Turn: " + players[currentPlayerIndex];
+            }
+
+            // Initial display of player's turn
+            switchPlayerTurn();
+
+        });
+    </script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+<script src="track.js"></script>
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pool Game</title>
+    <style>
+        /* Reset some default styles */
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Header styles */
+        header {
+            background-color: rgb(195, 207, 156);
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+
+        /* Main content styles */
+        main {
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* centered */
+        }
+
+        /* Footer styles */
+        footer {
+            background-color: rgb(195, 207, 156);
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            text-align: center; /* Center text within footer */
+        }
+
+        .startButton {
+            background-color: rgb(4, 65, 170); /* blue */
+            border: none;
+            border-radius: 8px;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            position: static;
+            top: 70%;
+            left: 50%;
+        }
+
+        #firstPlayerMessage {
+            text-align: center;
+            font-size: 24px; /* Larger font size */
+            margin-bottom: 20px; /* Added some space between message and form */
+            color: blue; /* Change text color to red */
+            font-weight: bold; /* Make text bold */
+            font-style: italic; /* Make text italic */
+            text-transform: uppercase; /* Convert text to uppercase */
+            position: absolute; /* Position the message absolutely */
+            top: 150px; /* Position the message 20px from the top of the page */
+            left: 50%; /* Center the message horizontally */
+            transform: translateX(-50%); /* Adjust for center alignment */
+        }
+
+        input[type="text"] {
+            display: block;
+            margin: 10px auto;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Welcome to the Pool Game!</h1>
+    </header>
+
+    <main>
+        <form id="gameForm" action="/pool.html" method="POST">
+            <label for="gameName">Game Name:</label><br>
+            <input type="text" id="gameName" name="gameName"><br>
+            <label for="player1Name">Player 1 Name:</label><br>
+            <input type="text" id="player1Name" name="player1Name"><br>
+            <label for="player2Name">Player 2 Name:</label><br>
+            <input type="text" id="player2Name" name="player2Name"><br><br>
+            <input type="hidden" id="playerTurn" name="playerTurn">
+            <button class="startButton" id="startGameButton">Start Game</button>
+            <p id="firstPlayerMessage"></p> <!-- Move this inside the form -->
+        </form>
+    </main>
+
+    <footer>
+        &copy; 2024 Pool Game
+    </footer>
+
+
+    <script>
+        document.getElementById("startGameButton").addEventListener("click", function(event){
+        event.preventDefault(); // Prevent default form submission
+                
+        var gameName = document.getElementById("gameName").value;
+        var player1Name = document.getElementById("player1Name").value;
+        var player2Name = document.getElementById("player2Name").value;
+                
+        var players = [player1Name, player2Name];
+        var startingPlayer = players[Math.floor(Math.random() * players.length)];
+                
+        var messageDiv = document.getElementById('firstPlayerMessage');
+        messageDiv.innerText = startingPlayer + ' starts the game!';
+        messageDiv.style.display = 'block';
+
+        document.getElementById("playerTurn").value = startingPlayer;
+
+        var form = document.getElementById('gameForm'); // Select the form
+        form.submit(); // Submit the form
+    });
+
+    </script>
+</body>
+</html>
